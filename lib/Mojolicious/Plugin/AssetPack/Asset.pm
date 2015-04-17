@@ -62,6 +62,27 @@ Returns the basename of L</url>.
 
 sub basename { File::Basename::basename(shift->url); }
 
+=head2 process
+
+  $self->process($assetpack, \@sources);
+
+=cut
+
+sub process {
+  my ($self, $assetpack, $sources) = @_;
+
+  $self->{content} = '';
+
+  for my $source (@$sources) {
+    my $content = $source->slurp;
+    my $ext     = Mojolicious::Plugin::AssetPack::_ext($source->url);
+    $assetpack->preprocessors->process($ext, $assetpack, \$content, $source->url);
+    $self->{content} .= $content;
+  }
+
+  return $self;
+}
+
 =head2 slurp
 
   $bytes = $self->slurp;

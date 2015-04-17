@@ -219,11 +219,10 @@ sub _inject {
 }
 
 sub _make_error_asset {
-  my ($self, $moniker, $file, $err) = @_;
+  my ($self, $moniker, $err) = @_;
 
   $err =~ s!\r!!g;
   $err =~ s!\n+$!!;
-  $err = "$file: $err";
 
   if ($moniker =~ /\.js$/) {
     $err =~ s!'!"!g;
@@ -260,23 +259,17 @@ sub _process {
     return $asset;
   }
 
-  $asset = $self->{asset}{$file} = Mojolicious::Plugin::AssetPack::Asset->new;
-  $asset->in_memory(1)->url(File::Spec->catfile($self->out_dir, $file));
-
-  for my $source (@sources) {
-    eval {
-      my $content = $source->slurp;
-      $self->preprocessors->process(_ext($source->url), $self, \$content, $source->url);
-      $asset->add_chunk($content);
-      1;
-    } or do {
-      my $e = $@;
-      warn "[ASSETPACK] process(@{[$source->url]}) FAIL $e\n" if DEBUG;
-      $asset->url(File::Spec->catfile($self->out_dir, "$name-$checksum[0].err.$ext"));
-      $asset->add_chunk($self->_make_error_asset($moniker, $source->basename, $e || 'Unknown error'));
-      last;
-    };
-  }
+  eval {
+    $asset = $self->_asset($file)->in_memory(1)->url(File::Spec->catfile($self->out_dir, $file));
+    $asset->process($self, \@sources);
+    1;
+  } or do {
+    my $e = $@;
+    warn "[ASSETPACK] process FAIL $e\n" if DEBUG;
+    $asset->url(File::Spec->catfile($self->out_dir, "$name-$checksum[0].err.$ext"));
+    $asset->add_chunk($self->_make_error_asset($moniker, $e || 'Unknown error'));
+    last;
+  };
 
   $asset->in_memory($self->out_dir ? 0 : 1)->save;
   $self->_app->log->info("Built asset for $moniker");
