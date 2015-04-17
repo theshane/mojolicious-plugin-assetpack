@@ -1,17 +1,20 @@
-package Mojolicious::Plugin::AssetPack::Preprocessor::Sprites;
+package Mojolicious::Plugin::AssetPack::Preprocessor::Image;
 
 =encoding utf8
 
 =head1 NAME
 
-Mojolicious::Plugin::AssetPack::Preprocessor::Sprites - Create image sprites
+Mojolicious::Plugin::AssetPack::Preprocessor::Image - Process images
 
 =head1 DESCRIPTION
 
-L<Mojolicious::Plugin::AssetPack::Preprocessor::Sprites> is a preprocessor for
-making sprites from image files.
+L<Mojolicious::Plugin::AssetPack::Preprocessor::Image> is a preprocessor for
+processing images.
 
-This module require L<Imager> to be installed.
+This module require L<Imager> and L<Imager::File::PNG> to be installed.
+
+  $ apt-get install libpng12-dev
+  $ cpanm Imager::File::PNG
 
 =head1 SYNOPSIS
 
@@ -24,9 +27,18 @@ This module require L<Imager> to be installed.
 =cut
 
 use Mojo::Base 'Mojolicious::Plugin::AssetPack::Preprocessor';
+use Mojolicious::Plugin::AssetPack::Asset::Image;
 use constant IMAGER => eval 'use Imager;1' ? 1 : 0;
 
 =head1 METHODS
+
+=head2 asset
+
+Returns an instance of L<Mojolicious::Plugin::AssetPack::Asset::Image>.
+
+=cut
+
+sub asset { Mojolicious::Plugin::AssetPack::Asset::Image->new }
 
 =head2 can_process
 
@@ -38,15 +50,12 @@ sub can_process {IMAGER}
 
 =head2 process
 
-This method use L<Imager> to process the assets.
+This method does nothing.
 
 =cut
 
 sub process {
-  my ($self, $assetpack, $text, $path) = @_;
-
-  warn length $$text;
-
+  my ($self, $assetpack, $data, $path) = @_;
   return $self;
 }
 

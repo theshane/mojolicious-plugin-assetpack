@@ -83,7 +83,7 @@ my %PREPROCESSORS = (
   js     => 'Mojolicious::Plugin::AssetPack::Preprocessor::JavaScript',
   jsx    => 'Mojolicious::Plugin::AssetPack::Preprocessor::Jsx',
   less   => 'Mojolicious::Plugin::AssetPack::Preprocessor::Less',
-  png    => 'Mojolicious::Plugin::AssetPack::Preprocessor::Sprites',
+  png    => 'Mojolicious::Plugin::AssetPack::Preprocessor::Image',
   sass   => 'Mojolicious::Plugin::AssetPack::Preprocessor::Sass',
   scss   => 'Mojolicious::Plugin::AssetPack::Preprocessor::Scss',
 );
@@ -130,6 +130,22 @@ sub add {
   }
 
   $self->on($extension => $arg);
+}
+
+=head2 asset_for
+
+  $asset = $self->asset_for($extension);
+
+=cut
+
+sub asset_for {
+  my ($self, $extension) = @_;
+
+  for my $p ($self->_preprocessors($extension)) {
+    return $p->asset;
+  }
+
+  return $self->fallback->asset;
 }
 
 =head2 can_process

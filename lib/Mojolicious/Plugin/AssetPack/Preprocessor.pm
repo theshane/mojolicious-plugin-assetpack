@@ -34,6 +34,14 @@ has cwd => sub {Cwd::getcwd};
 
 =head1 METHODS
 
+=head2 asset
+
+Returns an instance of L<Mojolicious::Plugin::AssetPack::Asset>.
+
+=cut
+
+sub asset { Mojolicious::Plugin::AssetPack::Asset->new }
+
 =head2 can_process
 
   $bool = $self->can_process;

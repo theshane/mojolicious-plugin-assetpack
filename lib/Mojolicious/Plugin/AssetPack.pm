@@ -260,7 +260,8 @@ sub _process {
   }
 
   eval {
-    $asset = $self->_asset($file)->in_memory(1)->url(File::Spec->catfile($self->out_dir, $file));
+    $asset = $self->{asset}{$file} = $self->preprocessors->asset_for($ext);
+    $asset->in_memory(1)->url(File::Spec->catfile($self->out_dir, $file));
     $asset->process($self, \@sources);
     1;
   } or do {
@@ -268,7 +269,6 @@ sub _process {
     warn "[ASSETPACK] process FAIL $e\n" if DEBUG;
     $asset->url(File::Spec->catfile($self->out_dir, "$name-$checksum[0].err.$ext"));
     $asset->add_chunk($self->_make_error_asset($moniker, $e || 'Unknown error'));
-    last;
   };
 
   $asset->in_memory($self->out_dir ? 0 : 1)->save;
