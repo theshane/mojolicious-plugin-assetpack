@@ -83,6 +83,7 @@ my %PREPROCESSORS = (
   js     => 'Mojolicious::Plugin::AssetPack::Preprocessor::JavaScript',
   jsx    => 'Mojolicious::Plugin::AssetPack::Preprocessor::Jsx',
   less   => 'Mojolicious::Plugin::AssetPack::Preprocessor::Less',
+  png    => 'Mojolicious::Plugin::AssetPack::Preprocessor::Sprites',
   sass   => 'Mojolicious::Plugin::AssetPack::Preprocessor::Sass',
   scss   => 'Mojolicious::Plugin::AssetPack::Preprocessor::Scss',
 );
